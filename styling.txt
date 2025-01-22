@@ -1,0 +1,45 @@
+// Add a new grade entry row
+function addEntry() {
+    const gradesContainer = document.getElementById('grades-container');
+    const newEntry = document.createElement('div');
+    newEntry.classList.add('grade-entry');
+    newEntry.innerHTML = `
+        <input type="number" class="grade" placeholder="Grade (0-4)" min="0" max="4" step="0.01">
+        <input type="number" class="credit" placeholder="Credits" min="1" step="1">
+    `;
+    gradesContainer.appendChild(newEntry);
+}
+
+// Calculate CGPA
+function calculateCGPA() {
+    const grades = document.querySelectorAll('.grade');
+    const credits = document.querySelectorAll('.credit');
+
+    let totalQualityPoints = 0;
+    let totalCredits = 0;
+
+    for (let i = 0; i < grades.length; i++) {
+        const grade = parseFloat(grades[i].value);
+        const credit = parseFloat(credits[i].value);
+
+        if (!isNaN(grade) && !isNaN(credit) && grade >= 0 && grade <= 4 && credit > 0) {
+            totalQualityPoints += grade * credit;
+            totalCredits += credit;
+        } else {
+            alert('Please enter valid grades (0-4) and credits (>0).');
+            return;
+        }
+    }
+
+    const cgpa = totalCredits > 0 ? (totalQualityPoints / totalCredits).toFixed(2) : 0;
+    localStorage.setItem('lastCGPA', cgpa);
+    document.getElementById('output').innerText = `Your CGPA is: ${cgpa}`;
+}
+
+// Load saved CGPA on page load
+window.onload = function () {
+    const savedCGPA = localStorage.getItem('lastCGPA');
+    if (savedCGPA) {
+        document.getElementById('output').innerText = `Last Calculated CGPA: ${savedCGPA}`;
+    }
+};
